@@ -92,20 +92,42 @@ program
     console.log('');
   });
 
-// Command: update
+// Command: update (Orchestrated multi-engine update)
 program
-  .command('update')
-  .description('Check for updates and release news')
-  .action(async () => {
-    console.log('\n🔄 [REO Updater] Checking for updates on GitHub...');
-    const result = await updater.checkForUpdates();
+  .command('update [engine]')
+  .description('Automatically check and update REO, REA, GhidraMCP, and ECC')
+  .option('-c, --check', 'Check for updates across all engines without applying them')
+  .action(async (engine, options) => {
+    console.log('\n🔄 [REO Orchestrator] Checking update status across all engines...\n');
+    const statuses = await updater.checkAll();
 
-    if (result.hasUpdate) {
-      console.log(`\n🚀 New version available: v${result.latest} (current: v${result.current})`);
-      if (result.releaseUrl) console.log(`👉 Release notes: ${result.releaseUrl}`);
-      console.log(`To update, run: npm install -g reo-sre@latest\n`);
+    statuses.forEach((s) => {
+      const icon = s.hasUpdate ? '🔔' : '✅';
+      const statusText = s.hasUpdate ? `Update available: ${s.currentVersion} -> ${s.latestVersion}` : `Up to date (${s.currentVersion})`;
+      console.log(`${icon} ${s.name}: ${statusText}`);
+      if (s.details) console.log(`   ℹ️ ${s.details}`);
+    });
+
+    if (options.check) {
+      console.log('\nCheck complete. To apply updates, run: reo update\n');
+      return;
+    }
+
+    const targetEngine = engine ? (engine.toLowerCase() as any) : 'all';
+    console.log(`\n⚡ Applying updates for: ${targetEngine.toUpperCase()}...`);
+
+    if (targetEngine === 'all') {
+      const results = await updater.updateAll();
+      console.log('');
+      results.forEach((r) => {
+        const icon = r.success ? '✅' : '❌';
+        console.log(`${icon} [${r.engine.toUpperCase()}]: ${r.message}`);
+      });
+      console.log('\n✨ All orchestrated engines updated successfully!\n');
     } else {
-      console.log(`✅ REO is up to date (version v${result.current}).\n`);
+      const res = await updater.updateEngine(targetEngine);
+      const icon = res.success ? '✅' : '❌';
+      console.log(`\n${icon} [${targetEngine.toUpperCase()}]: ${res.message}\n`);
     }
   });
 

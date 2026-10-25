@@ -97,6 +97,27 @@ export class ReoMcpServer {
               properties: {},
             },
           },
+          {
+            name: 'reo_update',
+            description:
+              'Autonomous orchestrator updater: Checks and updates REA, GhidraMCP, ECC, and REO automatically.',
+            inputSchema: {
+              type: 'object',
+              properties: {
+                engine: {
+                  type: 'string',
+                  enum: ['all', 'rea', 'ghidramcp', 'ecc', 'reo'],
+                  description: 'Engine to update, or "all" to update the full stack.',
+                  default: 'all',
+                },
+                checkOnly: {
+                  type: 'boolean',
+                  description: 'Whether to check for updates without applying them.',
+                  default: false,
+                },
+              },
+            },
+          },
         ],
       };
     });
@@ -106,6 +127,29 @@ export class ReoMcpServer {
       const { name, arguments: args } = request.params;
 
       try {
+        if (name === 'reo_update') {
+          const engine = (args?.engine as any) || 'all';
+          const checkOnly = args?.checkOnly === true;
+
+          if (checkOnly) {
+            const statuses = await this.updater.checkAll();
+            return {
+              content: [{ type: 'text', text: JSON.stringify(statuses, null, 2) }],
+            };
+          }
+
+          if (engine === 'all') {
+            const results = await this.updater.updateAll();
+            return {
+              content: [{ type: 'text', text: JSON.stringify(results, null, 2) }],
+            };
+          }
+
+          const res = await this.updater.updateEngine(engine);
+          return {
+            content: [{ type: 'text', text: JSON.stringify(res, null, 2) }],
+          };
+        }
         if (name === 'reo_analyze') {
           const filePath = String(args?.filePath || '');
           const targetFunction = args?.targetFunction ? String(args.targetFunction) : undefined;

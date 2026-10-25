@@ -64,24 +64,34 @@ Check that Java 25, Ghidra, GhidraMCP, and REA are properly connected:
 npx reo-sre doctor
 ```
 
-### 3. Self-Update
-Check and update REO:
+### 3. Orchestrated Engine Update
+Because REO orchestrates Ghidra, REA, GhidraMCP, and ECC, `reo update` automatically checks and updates all 4 engines and dependencies in a single run:
 
 ```bash
+# Check status across all 4 engines without updating
+npx reo-sre update --check
+
+# Automatically update REO, REA, GhidraMCP, and ECC
 npx reo-sre update
+
+# Or update a specific engine
+npx reo-sre update rea
+npx reo-sre update ghidramcp
+npx reo-sre update ecc
 ```
 
 ---
 
 ## 🔌 Using REO with AI Coding Assistants (MCP Server)
 
-REO exposes a **Meta-MCP server** that condenses 238 raw tools into **5 high-leverage autonomous tools**:
+REO exposes a **Meta-MCP server** that condenses 238 raw tools into **high-leverage autonomous tools**:
 
 | Tool | Description |
 | :--- | :--- |
 | `reo_analyze` | End-to-end autonomous analysis (triage, decompile, trace, and synthesize). |
 | `reo_decompile` | Deep C/C++ AST decompilation with callers and variable types. |
 | `reo_trace_and_annotate` | Frida dynamic trace that writes decrypted values directly back into Ghidra decompiler. |
+| `reo_update` | Autonomous multi-engine updater (updates REA, GhidraMCP, ECC, and REO on demand). |
 | `reo_doctor` | Self-diagnostic check for local reverse engineering prerequisites. |
 
 ### Configuration
