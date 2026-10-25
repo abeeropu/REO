@@ -1,0 +1,53 @@
+{
+  "name": "reo-sre",
+  "version": "1.0.0",
+  "description": "Reverse Engineering Orchestrator (REO) - Unified Autonomous SRE Conductor for Ghidra, REA, and ECC",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "reo": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/cli.js",
+    "dev": "tsx src/cli.ts",
+    "test": "tsx --test tests/**/*.test.ts",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "reverse-engineering",
+    "ghidra",
+    "mcp",
+    "model-context-protocol",
+    "rea",
+    "ecc",
+    "decompiler",
+    "binary-analysis",
+    "frida",
+    "ai-agent",
+    "sre"
+  ],
+  "author": "Abeer Opu <abeeropu@gmail.com> (https://github.com/abeeropu)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/abeeropu/reo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/abeeropu/reo/issues"
+  },
+  "homepage": "https://github.com/abeeropu/reo#readme",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.6.1",
+    "commander": "^12.1.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
